@@ -1,0 +1,27 @@
+# 修改记录
+
+## 2026-05-24
+
+### 新增文件
+- `cet4_words.js` — CET-4 词库 (1877 词), 由 `gen_cet4.py` 生成
+- `ky_words.js` — 考研英语词库 (1546 词), 由 `gen_ky.py` 生成
+
+### 修改文件
+- **`cet6_words.js`**: 变量名 `WORDS_DATA` → `WORDS_DATA_CET6`
+- **`index.html`**:
+  - 头部标题替换为模块切换按钮 (CET-4 / CET-6 / 考研英语)
+  - 新增 `MODULES` 配置对象, 管理三个模块的 name / label / key / data
+  - 新增 `switchModule()` 函数, 支持模块间切换并保留各自 localStorage 状态
+  - `loadState()` / `saveState()` 改用 `MODULES[currentModule].key` 作为键名
+  - `loadModulePref()` / `saveModulePref()` 持久化当前模块偏好
+  - 新增模块切换器 CSS 样式
+- **`context_protection/checkpoint.md`**: 更新架构描述, 补充模块切换信息
+
+### 删除文件
+- `english_learn.html.bak` — 备份文件, 已完成使命
+- `index.html.bak2` — 备份文件, 已完成使命
+- `gen_cet4.py` / `gen_ky.py` — 一次性生成脚本, 不再需要
+
+### 修复 Bug
+- `renderHistory()` 中 `getBatchForDay(ci)` → `getBatchForDay(ci + 1)` (天数与词汇批次偏移量不匹配)
+- `MODULES` 对象定义时直接引用外部变量 `WORDS_DATA_CET6` 等，若词库 JS 未加载会导致 `ReferenceError` 且中断整个脚本。改为 `loadVocab(mod)` 惰性加载 + `Array.isArray` 守卫，防止初始化崩溃
